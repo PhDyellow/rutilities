@@ -15,3 +15,5 @@ LazyData: true
 Imports:
   archivist (>= 2.3.2)
 RoxygenNote: 6.1.1
+URL: https://github.com/PhDyellow/rutilities
+BugReports: https://github.com/PhDyellow/rutilities/issues
