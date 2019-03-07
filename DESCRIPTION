@@ -1,0 +1,17 @@
+Package: rutilities
+Title: Utilities for Phil Dyer
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Phil",
+           family = "Dyer",
+           role = c("aut", "cre"),
+           email = "phildyer@protonmail.com")
+Description: Set of functions that I have needed.
+    Functions will start out specific
+    and be extended if I need to.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+  archivist (>= 2.3.2)
+RoxygenNote: 6.1.1
