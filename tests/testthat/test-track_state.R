@@ -76,7 +76,36 @@ test_that("Git returns status", {
   expect_error(track_git_status(not_a_dir), "Specified repo path does not exist")
   expect_match(track_git_status(local_clean)[["repo"]], "HEAD")
   expect_match(track_git_status(local_clean)[["status"]], "working directory clean")
+  expect_match(track_git_status(local_dirty)[["repo"]], "HEAD")
+  expect_match(track_git_status(local_dirty)[["status"]], "Unstaged changes")
+  expect_match(track_git_status(local_untracked)[["repo"]], "HEAD")
+  expect_match(track_git_status(local_untracked)[["status"]], "Untracked files")
 })
+
+context("combined tracking")
+test_that("track_all_stages contains all entries", {
+  expect_equal(names(track_all_states(c(local_untracked,local_dirty, local_clean))), c("system", "packages", "git"))
+  expect_equal(names(track_all_states()), c("system", "packages"))
+})
+
+test_that("track_all_stages loads in package list", {
+  expect_equal(colnames(track_all_states(c(local_untracked,local_dirty, local_clean))[["packages"]]), c("Package", "Version", "Built"))
+  expect_equal(track_all_states(c(local_untracked,local_dirty, local_clean))[["packages"]][row.names(track_packages()) == "grDevices", 1], "grDevices")
+})
+
+test_that("track_all_stages loads in system state", {
+  expect_match(track_all_states(c(local_untracked,local_dirty, local_clean))[["system"]][[1]], "R version")
+  expect_match(track_all_states(c(local_untracked,local_dirty, local_clean))[["system"]][[1]], "Platform")
+  expect_is(track_all_states(c(local_untracked,local_dirty, local_clean))[["system"]][[2]], "POSIXct")
+})
+
+test_that("track_all_stages handles git repos properly", {
+  expect_error(track_all_states(git_repos = list("a"=5, b = "6")), "Invalid git repo")
+  expect_length(track_all_states(c(local_untracked,local_dirty, local_clean))[["git"]], 3)
+  expect_null(track_all_states()[["git"]])
+
+})
+
 
 unlink(local_clean, recursive = TRUE,force = TRUE)
 unlink(local_dirty, recursive = TRUE, force = TRUE)
