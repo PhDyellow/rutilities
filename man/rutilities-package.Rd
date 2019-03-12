@@ -10,6 +10,14 @@ Set of functions that I have needed.
     Functions will start out specific
     and be extended if I need to.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/PhDyellow/rutilities}
+  \item Report bugs at \url{https://github.com/PhDyellow/rutilities/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Phil Dyer \email{phildyer@protonmail.com}
 
