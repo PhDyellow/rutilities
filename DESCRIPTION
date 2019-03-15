@@ -13,7 +13,8 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-  archivist (>= 2.3.2)
+  archivist (>= 2.3.2),
+  git2r (>= 0.24.0)
 RoxygenNote: 6.1.1
 URL: https://github.com/PhDyellow/rutilities
 BugReports: https://github.com/PhDyellow/rutilities/issues
