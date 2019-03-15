@@ -7,8 +7,8 @@
 #'   System time,
 #'   R version
 #'   OS details
-#'   
-#' 
+#'
+#'
 track_system_state <- function(){
   sysState <- list()
   sysState$system <- paste0(capture.output(sessionInfo()), collapse="\n")

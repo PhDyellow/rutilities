@@ -84,24 +84,26 @@ test_that("Git returns status", {
 
 context("combined tracking")
 test_that("track_all_stages contains all entries", {
-  expect_equal(names(track_all_states(c(local_untracked,local_dirty, local_clean))), c("system", "packages", "git"))
-  expect_equal(names(track_all_states()), c("system", "packages"))
+  expect_error(track_all_states(c(local_untracked, local_dirty, local_clean)), "Git directory has untracked changes")
+  expect_named(track_all_states(c(local_clean)), c("system", "packages", "git"))
+  expect_named(track_all_states(), c("system", "packages"))
 })
 
 test_that("track_all_stages loads in package list", {
-  expect_equal(colnames(track_all_states(c(local_untracked,local_dirty, local_clean))[["packages"]]), c("Package", "Version", "Built"))
-  expect_equal(track_all_states(c(local_untracked,local_dirty, local_clean))[["packages"]][row.names(track_packages()) == "grDevices", 1], "grDevices")
+  #not actually a named data.frame or list
+  expect_equal(colnames(track_all_states(c(local_clean))[["packages"]]), c("Package", "Version", "Built"))
+  expect_equal(track_all_states(c(local_clean))[["packages"]][row.names(track_packages()) == "grDevices", 1], "grDevices")
 })
 
 test_that("track_all_stages loads in system state", {
-  expect_match(track_all_states(c(local_untracked,local_dirty, local_clean))[["system"]][[1]], "R version")
-  expect_match(track_all_states(c(local_untracked,local_dirty, local_clean))[["system"]][[1]], "Platform")
-  expect_is(track_all_states(c(local_untracked,local_dirty, local_clean))[["system"]][[2]], "POSIXct")
+  expect_match(track_all_states(c(local_clean))[["system"]][[1]], "R version")
+  expect_match(track_all_states(c(local_clean))[["system"]][[1]], "Platform")
+  expect_is(track_all_states(c(local_clean))[["system"]][[2]], "POSIXct")
 })
 
 test_that("track_all_stages handles git repos properly", {
   expect_error(track_all_states(git_repos = list("a"=5, b = "6")), "Invalid git repo")
-  expect_length(track_all_states(c(local_untracked,local_dirty, local_clean))[["git"]], 3)
+  expect_length(track_all_states(c(local_clean))[["git"]], 1)
   expect_null(track_all_states()[["git"]])
 
 })
