@@ -4,8 +4,13 @@
 \alias{track_all_states}
 \title{Bring together all state information}
 \usage{
-track_all_states(git_repo = ".")
+track_all_states(git_repos = NULL)
+}
+\arguments{
+\item{git_repos}{char array of git repo paths to include. By default, no repos are checked and the return is NA}
 }
 \description{
-Bring together all state information
+Provides a named list with the list of installed packages,
+the state of the system, and the git revision of
+local repositories
 }

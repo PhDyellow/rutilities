@@ -20,6 +20,7 @@ track_system_state <- function(){
 #'
 #' Check that a git project has no uncommitted changes or untracked files, and stop if
 #' they are found
+#' @importFrom git2r status in_repository
 is_git_repo_clean <- function(git_repo = '.', stop_if_false = TRUE, verbose = FALSE){
   if(!dir.exists(git_repo)){
     stop(paste0("Specified repo path does not exist: (", git_repo, ")"))
@@ -60,7 +61,8 @@ is_git_repo_clean <- function(git_repo = '.', stop_if_false = TRUE, verbose = FA
 
 
 #' Print Git state of a project
-
+#'
+#' @importFrom git2r status repository_head
 track_git_status <- function(git_repo = '.'){
 
   if(!dir.exists(git_repo)){
@@ -87,6 +89,7 @@ track_packages <- function(){
 #' local repositories
 #'
 #' @param git_repos char array of git repo paths to include. By default, no repos are checked and the return is NA
+#' @export
 track_all_states <- function(git_repos = NULL){
   if(class(git_repos) != "character" & !is.null(git_repos)){
     stop("Invalid git repo parameter")
