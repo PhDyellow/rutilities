@@ -29,7 +29,7 @@ is_git_repo_clean <- function(git_repo = '.', stop_if_false = TRUE, verbose = FA
     stop(paste0("Not a git repository: " , git_repo))
   }
 
-  gitState <- system2("git", c("-C", git_repo, "status", "--porcelain"),stderr = TRUE, stdout = TRUE)
+  gitState <- system2("git", c(paste0("--git-dir=", git_repo, "/.git"), paste0("--work-tree=", git_repo), "status", "--porcelain"),stderr = TRUE, stdout = TRUE)
 
   if (length(grep("\\?\\?", gitState, invert = TRUE)) != 0){
     if (verbose){
