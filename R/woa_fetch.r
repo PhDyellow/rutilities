@@ -92,7 +92,7 @@ woa_fetcher <- function(output_dir,
 
     #define mappings to urls and filenames in NOAA
 
-    res_url_map <- list(`5deg` = "5deg",
+    res_url_map <- list(`5deg` = "5d",
                          `1.00` = "01",
                          `0.25` = "04")
 
