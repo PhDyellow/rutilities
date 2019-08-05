@@ -10,6 +10,7 @@
 #' @param season integer vector. Including 0 in the vector returns annual climatology, 1 to 12 returns January to December (1:12 for all) and 13 to 16 return Winter, Spring, Summer, Autumn. Default 0:16 returns all climatologies
 #' @param dl_method specify how download.file() will fetch file. See ?download.file
 #' @param verbose control printing to terminal
+#' @param redownload if TRUE, overwrite existing files 
 woa_fetcher <- function(output_dir, 
                         res = "1.00",
                         decade = "A5B7",
@@ -17,7 +18,8 @@ woa_fetcher <- function(output_dir,
                         version = "18",
                         season = 0:16,
                         dl_method = "auto",
-                        verbose = FALSE) {
+                        verbose = FALSE
+                        redownload = FALSE) {
     #valid names
     woa_names <- list(res = c("5deg",
                            "1.00",
@@ -146,7 +148,13 @@ woa_fetcher <- function(output_dir,
     fetched_urls <- apply(to_fetch_res, 1, function(f){
         nc_url <- file.path(base_url, f["env_var"], f["decade"], f["res"])
         nc_file <- paste0("woa", f["version"], "_", f["decade"], "_", env_var_f_map[[f["env_var"]]], stringr::str_pad(as.integer(f["season"]), width = 2, side = "left", pad = "0"), "_", res_url_map[[f["res"]]], ".nc") 
-        dl_ret <- download.file(file.path(nc_url, nc_file), file.path(output_dir, nc_file), method = dl_method, quiet = !verbose, mode = "wb")
+        if(!file.exists(file.path(output_dir, nc_file)) | redownload){
+            dl_ret <- download.file(file.path(nc_url, nc_file), file.path(output_dir, nc_file), method = dl_method, quiet = !verbose, mode = "wb")
+        } else {
+            #file exists, don't fetch again
+            dl_ret = 0
+        }
+
         if(dl_ret != 0){
             stop(paste0("Download failed. download.file reported error code: ", dl_ret))
         }
