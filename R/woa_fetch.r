@@ -70,6 +70,7 @@ woa_fetcher <- function(output_dir,
                              ret <- switch(class(param_list[[param]]), 
                   "logical" = {unique(woa_names[[param]][param_list[[param]]])},
                   "numeric" = {unique(woa_names[[param]][param_list[[param]]])},
+                  "integer" = {unique(woa_names[[param]][param_list[[param]]])},
                   "character" = {unique(param_list[[param]])},
                   stop(paste0(param, " seems to be misspecified. Got: ", param_list[[param]], 
 ". Expected logical, numeric or character vector." ))
