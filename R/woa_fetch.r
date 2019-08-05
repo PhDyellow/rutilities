@@ -125,10 +125,25 @@ woa_fetcher <- function(output_dir,
     #collapse, to_fetch_dec has non_unique rows now
     to_fetch_uni <- unique(to_fetch_dec)
 
+    #ignore invalid resolutions
+    #temperature, salinity: 5deg only allowed with decav. 1 and 0.25 always ok
+    #all others, 5deg and 1 ok, 0.25 never allowed
+    to_fetch_res <- dplyr::filter(to_fetch_uni,
+                                  (env_var %in% c("temperature", "salinity") & ((decade == "decav" & res == "5deg") | (res %in% c("1.00", "0.25") ))) |
+                                   (!(env_var %in% c("temperature", "salinity")) & (res %in% c("1.00", "5deg") ))
+                                  )
+
+    if (verbose) {
+        dropped_rows <- dplyr::setdiff(to_fetch_uni, to_fetch_res)
+        print("Dropped invalid combinations")
+        print(dropped_rows)
+    }
+
+
 
     base_url <- "https://data.nodc.noaa.gov/thredds/fileServer/ncei/woa"
 
-    fetched_urls <- apply(to_fetch_uni, 1, function(f){
+    fetched_urls <- apply(to_fetch_res, 1, function(f){
         nc_url <- file.path(base_url, f["env_var"], f["decade"], f["res"])
         nc_file <- paste0("woa", f["version"], "_", f["decade"], "_", env_var_f_map[[f["env_var"]]], stringr::str_pad(as.integer(f["season"]), width = 2, side = "left", pad = "0"), "_", res_url_map[[f["res"]]], ".nc") 
         dl_ret <- download.file(file.path(nc_url, nc_file), file.path(output_dir, nc_file), method = dl_method, quiet = !verbose, mode = "wb")
