@@ -18,7 +18,7 @@ woa_fetcher <- function(output_dir,
                         version = "18",
                         season = 0:16,
                         dl_method = "auto",
-                        verbose = FALSE
+                        verbose = FALSE,
                         redownload = FALSE) {
     #valid names
     woa_names <- list(res = c("5deg",
