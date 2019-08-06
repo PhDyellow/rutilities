@@ -24,14 +24,14 @@ woa_fetcher <- function(output_dir,
     woa_names <- list(res = c("5deg",
                            "1.00",
                            "0.25"),
-                        decade = c("decav",
-                             "5564",
-                             "6574",
-                             "7584",
-                             "8594",
-                             "95A4",
-                             "A5B7",
-                             "decav81B0"),
+                        decade = c("decav81B0",
+                                   "decav",
+                                   "A5B7",
+                                   "95A4",
+                                   "8594",
+                                   "7584",
+                                   "6574",
+                                   "5564",),
                         env_var = c("temperature",
                         "salinity",
                         "oxygen",
@@ -135,8 +135,9 @@ woa_fetcher <- function(output_dir,
                                   ((env_var %in% c("temperature", "salinity") & ((decade == "decav" & res == "5deg") | (res %in% c("1.00", "0.25") ))) | 
                                     #all other vars, 0.25 not available
                                    (!(env_var %in% c("temperature", "salinity")) & (res %in% c("1.00", "5deg") ))) &
-                                   #salinity is missing months at 0.25 for specific decades
-                                   (!(env_var == "salinity" & res == "0.25" & season %in% 1:12))
+                                   #salinity is missing months at 0.25 for decades before 2005
+                                    #Temperature is missing months at 0.25 for decades before 2005 (A5)
+                                   (!(env_var %in% c("temperature", "salinity") & res == "0.25" & season %in% 1:12 & decade %in% woa_names$decade[4:8]))
                                   )
 
     if (verbose) {
