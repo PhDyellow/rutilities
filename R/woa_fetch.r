@@ -11,7 +11,7 @@
 #' @param dl_method specify how download.file() will fetch file. See ?download.file
 #' @param verbose control printing to terminal
 #' @param redownload if TRUE, overwrite existing files 
-woa_fetcher <- function(output_dir, 
+woa_fetcher <- function(output_dir,
                         res = "1.00",
                         decade = "A5B7",
                         env_var = NULL,
@@ -50,7 +50,7 @@ woa_fetcher <- function(output_dir,
                        version = unique(version),
                        season = unique(season))
 
-    if(is.null(env_var)) {
+    if (is.null(env_var)) {
         param_list$env_var <- woa_names$env_var
     }
 
@@ -63,17 +63,17 @@ woa_fetcher <- function(output_dir,
       }
     )
 
-    if(!all(param_list$season %in% 0:16)) {
+    if (!all(param_list$season %in% 0:16)) {
         stop(paste0("'season' must be integer vector containing only numbers from 0 to 16 inclusively. Got: ", season))
     }
 
     #convert all parameters to char vectors
     param_char <- sapply(names(param_list[!(names(param_list) %in% "season")]), function(param){
-                             ret <- switch(class(param_list[[param]]), 
-                  "logical" = {unique(woa_names[[param]][param_list[[param]]])},
-                  "numeric" = {unique(woa_names[[param]][param_list[[param]]])},
-                  "integer" = {unique(woa_names[[param]][param_list[[param]]])},
-                  "character" = {unique(param_list[[param]])},
+                             ret <- switch(class(param_list[[param]]),
+                  "logical" = unique(woa_names[[param]][param_list[[param]]]),
+                  "numeric" = unique(woa_names[[param]][param_list[[param]]]),
+                  "integer" = unique(woa_names[[param]][param_list[[param]]]),
+                  "character" = unique(param_list[[param]]),
                   stop(paste0(param, " seems to be misspecified. Got: ", param_list[[param]], 
 ". Expected logical, numeric or character vector." ))
                   )
@@ -82,9 +82,9 @@ woa_fetcher <- function(output_dir,
     )
 
     param_char$season <- switch(class(param_list$season),
-                                "logical" = {unique(0:16[param_list$season])},
-                                "numeric" = {unique(param_list$season)},
-                                "integer" = {unique(param_list$season)},
+                                "logical" = unique(0:16[param_list$season]),
+                                "numeric" = unique(param_list$season),
+                                "integer" = unique(param_list$season),
                   stop(paste0("season seems to be misspecified. Got: ", param_list[["season"]], 
 ". Expected logical or numeric vector."))
                   )
@@ -131,13 +131,14 @@ woa_fetcher <- function(output_dir,
     #temperature, salinity: 5deg only allowed with decav. 1 and 0.25 always ok
     #all others, 5deg and 1 ok, 0.25 never allowed
     to_fetch_res <- dplyr::filter(to_fetch_uni,
-                                  #temp and sal, 5deg only available for decav
-                                  ((env_var %in% c("temperature", "salinity") & ((decade == "decav" & res == "5deg") | (res %in% c("1.00", "0.25") ))) | 
-                                    #all other vars, 0.25 not available
-                                   (!(env_var %in% c("temperature", "salinity")) & (res %in% c("1.00", "5deg") ))) &
-                                   #salinity is missing months at 0.25 for decades before 2005
-                                    #Temperature is missing months at 0.25 for decades before 2005 (A5)
-                                   (!(env_var %in% c("temperature", "salinity") & res == "0.25" & season %in% 1:12 & decade %in% woa_names$decade[4:8]))
+                              #temp and sal, 5deg only available for decav
+                              ( (env_var %in% c("temperature", "salinity") &
+                                 ( (decade == "decav" & res == "5deg") | (res %in% c("1.00", "0.25")))) |
+                                #all other vars, 0.25 not available
+                               ( !(env_var %in% c("temperature", "salinity")) & (res %in% c("1.00", "5deg") ))) &
+                               #salinity is missing months at 0.25 for decades before 2005
+                                #Temperature is missing months at 0.25 for decades before 2005 (A5)
+                               ( !(env_var %in% c("temperature", "salinity") & res == "0.25" & season %in% 1:12 & decade %in% woa_names$decade[4:8]))
                                   )
 
     if (verbose) {
@@ -153,14 +154,14 @@ woa_fetcher <- function(output_dir,
     fetched_urls <- apply(to_fetch_res, 1, function(f){
         nc_url <- file.path(base_url, f["env_var"], f["decade"], f["res"])
         nc_file <- paste0("woa", f["version"], "_", f["decade"], "_", env_var_f_map[[f["env_var"]]], stringr::str_pad(as.integer(f["season"]), width = 2, side = "left", pad = "0"), "_", res_url_map[[f["res"]]], ".nc") 
-        if(!file.exists(file.path(output_dir, nc_file)) | redownload){
+        if (!file.exists(file.path(output_dir, nc_file)) | redownload){
             dl_ret <- download.file(file.path(nc_url, nc_file), file.path(output_dir, nc_file), method = dl_method, quiet = !verbose, mode = "wb")
         } else {
             #file exists, don't fetch again
-            dl_ret = 0
+            dl_ret <- 0
         }
 
-        if(dl_ret != 0){
+        if (dl_ret != 0){
             stop(paste0("Download failed. download.file reported error code: ", dl_ret))
         }
         return(file.path(output_dir, nc_file))
