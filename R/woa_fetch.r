@@ -131,8 +131,12 @@ woa_fetcher <- function(output_dir,
     #temperature, salinity: 5deg only allowed with decav. 1 and 0.25 always ok
     #all others, 5deg and 1 ok, 0.25 never allowed
     to_fetch_res <- dplyr::filter(to_fetch_uni,
-                                  (env_var %in% c("temperature", "salinity") & ((decade == "decav" & res == "5deg") | (res %in% c("1.00", "0.25") ))) |
-                                   (!(env_var %in% c("temperature", "salinity")) & (res %in% c("1.00", "5deg") ))
+                                  #temp and sal, 5deg only available for decav
+                                  ((env_var %in% c("temperature", "salinity") & ((decade == "decav" & res == "5deg") | (res %in% c("1.00", "0.25") ))) | 
+                                    #all other vars, 0.25 not available
+                                   (!(env_var %in% c("temperature", "salinity")) & (res %in% c("1.00", "5deg") ))) &
+                                   #salinity is missing months at 0.25 for specific decades
+                                   (!(env_var == "salinity" & res == "0.25" & season %in% 1:12))
                                   )
 
     if (verbose) {
