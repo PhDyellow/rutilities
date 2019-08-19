@@ -48,10 +48,10 @@ is_git_repo_clean <- function(git_repo = '.', stop_if_false = TRUE, verbose = FA
   if (length(grep("\\?\\?", gitState, invert = FALSE)) != 0) {
     if (verbose){
       message("Git directory has untracked changes")
-      print(git2r::status())
+      print(git2r::status(repo = git_repo))
     }
     if(stop_if_false){
-      stop("Git directory has untracked changes", git2r::status())
+      stop("Git directory has untracked changes", git2r::status(repo = git_repo))
     } else {
       return(FALSE)
     }
