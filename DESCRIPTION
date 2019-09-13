@@ -1,6 +1,6 @@
 Package: rutilities
 Title: Utilities for Phil Dyer
-Version: 0.0.1
+Version: 0.0.1.9000
 Authors@R: 
     person(given = "Phil",
            family = "Dyer",
