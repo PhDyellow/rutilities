@@ -7,13 +7,13 @@
 #'   System time,
 #'   R version
 #'   OS details
-#'
+#'   Package details
 #'
 track_system_state <- function(){
-  sysState <- list()
-  sysState$system <- paste0(capture.output(sessionInfo()), collapse="\n")
-  sysState$time <- Sys.time()
-  return(sysState)
+  sys_state <- sessioninfo::session_info()
+  sys_state$library <- levels(sys_state$packages$library)
+  sys_state$time <- Sys.time()
+  return(sys_state)
 }
 
 #' Check that a git project is clean
@@ -95,18 +95,16 @@ track_all_states <- function(git_repos = NULL){
     stop("Invalid git repo parameter")
   }
 
-  state <- list()
-  state$system <- track_system_state()
-  state$packages <- track_packages()
+  sys_state <- track_system_state()
   if (is.null(git_repos)){
-    state$git <- NULL
+    sys_state$git <- NULL
   } else {
-    state$git <- list()
+    sys_state$git <- list()
     for(repo in git_repos){
       if(is_git_repo_clean(git_repo = repo, stop_if_false = TRUE)){
-        state$git[[repo]] <- track_git_status(git_repo = repo)
+        sys_state$git[[repo]] <- track_git_status(git_repo = repo)
       }
     }
   }
-  return(state)
+  return(sys_state)
 }
