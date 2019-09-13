@@ -11,7 +11,7 @@
 #'
 track_system_state <- function(){
   sys_state <- sessioninfo::session_info()
-  sys_state$libraries <- levels(sys_state$system$packages$library)
+  sys_state$library <- levels(sys_state$packages$library)
   sys_state$time <- Sys.time()
   return(sys_state)
 }
