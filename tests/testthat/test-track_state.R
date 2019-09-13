@@ -5,9 +5,11 @@ context("test-track_state")
 
 
 test_that("System state is properly captured", {
-  expect_match(track_system_state()[[1]], "R version")
-  expect_match(track_system_state()[[1]], "Platform")
-  expect_is(track_system_state()[[2]], "POSIXct")
+  expect_match(names(track_system_state())[1], "platform")
+  expect_match(names(track_system_state())[2], "packages")
+  expect_match(names(track_system_state())[3], "library")
+  expect_match(names(track_system_state())[4], "time")
+  expect_is(track_system_state()[[4]], "POSIXct")
 })
 
 
@@ -85,20 +87,32 @@ test_that("Git returns status", {
 context("combined tracking")
 test_that("track_all_stages contains all entries", {
   expect_error(track_all_states(c(local_untracked, local_dirty, local_clean)), "Git directory has untracked changes")
-  expect_named(track_all_states(c(local_clean)), c("system", "packages", "git"))
-  expect_named(track_all_states(), c("system", "packages"))
+  expect_named(track_all_states(c(local_clean)), c("platform", "packages", "library", "time", "git"))
+  expect_named(track_all_states(), c("platform", "packages", "library", "time"))
 })
 
 test_that("track_all_stages loads in package list", {
   #not actually a named data.frame or list
-  expect_equal(colnames(track_all_states(c(local_clean))[["packages"]]), c("Package", "Version", "Built"))
-  expect_equal(track_all_states(c(local_clean))[["packages"]][row.names(track_packages()) == "grDevices", 1], "grDevices")
+  expect_equal(colnames(track_all_states(c(local_clean))[["packages"]]), c("package",
+                                                                                       "ondiskversion",
+                                                                                       "loadedversion",
+                                                                                       "path",
+                                                                                       "loadedpath",
+                                                                                       "attached",
+                                                                                       "is_base",
+                                                                                       "date",
+                                                                                       "source",
+                                                                                       "md5ok",
+                                                                                       "library"))
+  expect_true("rutilities" %in% track_all_states(c(local_clean))[["packages"]][["package"]])
 })
 
 test_that("track_all_stages loads in system state", {
-  expect_match(track_all_states(c(local_clean))[["system"]][[1]], "R version")
-  expect_match(track_all_states(c(local_clean))[["system"]][[1]], "Platform")
-  expect_is(track_all_states(c(local_clean))[["system"]][[2]], "POSIXct")
+  expect_match(names(track_all_states(c(local_clean)))[1], "platform")
+  expect_match(names(track_all_states(c(local_clean)))[2], "packages")
+  expect_match(names(track_all_states(c(local_clean)))[3], "library")
+  expect_match(names(track_all_states(c(local_clean)))[4], "time")
+  expect_is(track_all_states(c(local_clean))[[4]], "POSIXct")
 })
 
 test_that("track_all_stages handles git repos properly", {
